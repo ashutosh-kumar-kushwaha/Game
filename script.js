@@ -8,6 +8,11 @@ let background1 = document.querySelector(".background-1");
 let background2 = document.querySelector(".background-2");
 let posX = 0;
 
+function moveLeft(){
+    posX += 3;
+    background1.style.left = posX;
+}
+
 function moveRight(){
     posX -=3;
     background1.style.left = posX;
@@ -17,6 +22,9 @@ function moveRight(){
 document.addEventListener("keydown", (event) => {
     if(event.key == "ArrowRight"){
         moveRight();
+    }
+    else if(event.key == "ArrowLeft"){
+        moveLeft();
     }
 })
 

@@ -126,7 +126,11 @@ function moveLeft(){
 }
 
 let jumpDirection = "up";
-    
+
+let moveRightEvent;
+let isMovingRight = false;
+let moveLeftEvent;
+let isMovingLeft = false;
 
 let jump;
 
@@ -149,12 +153,19 @@ function jump2(){
 }
 
 document.addEventListener("keydown", (event) => {
-    if(event.key == "ArrowRight"){
-        moveRight();
+    if(event.key == "ArrowRight" && !isMovingRight){
+        moveRightEvent = setInterval(moveRight, 40);
+        isMovingRight = true;   
+        isMovingLeft = false;
+        clearInterval(moveLeftEvent);
         console.log("Right");
     }
-    if(event.key == "ArrowLeft"){
-        moveLeft();
+    if(event.key == "ArrowLeft" && !isMovingLeft){
+        moveLeftEvent = setInterval(moveLeft, 40);
+        isMovingLeft = true;
+        isMovingRight = false;
+        clearInterval(moveRightEvent);
+        console.log("Left");
     }
     if(event.shiftKey && !isJumping){
         jump = setInterval(jump2, 25);
@@ -163,9 +174,14 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
-// document.addEventListener("keyup", (event) => {
-//     if(event.key == "ArrowRight" || event.key == "ArrowLeft"){
-//         clearInterval(animatePlayer);
-//     }
-// })
 
+document.addEventListener("keyup", (event) => {
+    if(event.key == "ArrowRight"){
+        clearInterval(moveRightEvent);
+        isMovingRight = false;
+    }
+    if(event.key == "ArrowLeft"){
+        clearInterval(moveLeftEvent);
+        isMovingLeft = false;
+    }
+});

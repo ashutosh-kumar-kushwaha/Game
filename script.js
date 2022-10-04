@@ -1,32 +1,56 @@
-const screen = document.querySelector(".screen");
-let screenHeight = screen.offsetWidth;
-let screenWidth = screen.offsetHeight;
-let rect = screen.getBoundingClientRect();
-let screenTop = rect.top;
-let screenLeft = rect.left;
-let background1 = document.querySelector(".background-1");
-let background2 = document.querySelector(".background-2");
-let posX = 0;
+const canvas = document.querySelector("canvas");
+const ctx = canvas.getContext("2d");
+const canvasWidth = canvas.offsetWidth;
+const canvasHeight = canvas.offsetHeight;
+canvas.width = canvasWidth;
+canvas.height = canvasHeight;
 
-function moveLeft(){
-    posX += 3;
-    background1.style.left = posX;
+const backgroundLayer1 = new Image();
+backgroundLayer1.src = "images/bg.png";
+
+const backgroundLayer2 = new Image();
+backgroundLayer2.src = "images/bg.png";
+
+let background1X = 0;
+let background2X = canvasWidth;
+
+function animate(){
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    ctx.drawImage(backgroundLayer1, background1X, 0, canvasWidth, canvasHeight);
+    ctx.drawImage(backgroundLayer2, background2X, 0, canvasWidth, canvasHeight);
+    requestAnimationFrame(animate);
 }
+
+console.log(canvasHeight, canvasWidth)
+animate();
 
 function moveRight(){
-    posX -=3;
-    background1.style.left = posX;
+    background1X -= 10;
+    background2X -= 10;
+    if(background1X < -canvasWidth){
+        background1X = background2X + canvasWidth;
+    }
+    if(background2X < -canvasWidth){
+        background2X = background1X + canvasWidth;
+    }
 }
 
+function moveLeft(){
+    background1X += 10;
+    background2X += 10;
+    if(background1X > canvasWidth){
+        background1X = background2X - canvasWidth;
+    }
+    if(background2X > canvasWidth){
+        background2X = background1X - canvasWidth;
+    }
+}
 
 document.addEventListener("keydown", (event) => {
     if(event.key == "ArrowRight"){
         moveRight();
     }
-    else if(event.key == "ArrowLeft"){
+    if(event.key == "ArrowLeft"){
         moveLeft();
     }
 })
-
-
-console.log(screenHeight, screenWidth, screenTop, screenLeft);

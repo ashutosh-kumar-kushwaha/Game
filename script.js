@@ -21,108 +21,185 @@ let isPlayerDirectionRight = true;
 let background1X = 0;
 let background2X = canvasWidth;
 
-let animatePlyr = 2;
+const enemies = new Image();
+enemies.src = "images/enemies.png";
+
+class Enemy{
+    constructor(height, width, xPos,xPosStart, xPosEnd, yPos, xPosInImage, yPosInImage, xPosInFlippedImage){
+        this.height = height;
+        this.width = width;
+        this.xPos = xPos;
+        this.xPosStart = xPosStart;
+        this.xPosEnd = xPosEnd;
+        this.yPos = yPos;
+        this.xPosInImage = xPosInImage;
+        this.yPosInImage = yPosInImage;
+        this.xPosInFlippedImage = xPosInFlippedImage;
+        this.isMovingLeft = true;
+    }
+    update(){
+        if(this.isMovingLeft){
+            if(this.xPos <= this.xPosStart){
+                this.isMovingLeft = false;
+                this.xPos = this.xPosStart;
+                enemies.src = "images/enemiesf.png";
+            }
+            else{
+                this.xPos-=2;
+            }
+        }
+        else{
+            if(this.xPos >= this.xPosEnd){
+                this.isMovingLeft = true;
+                this.xPos = this.xPosEnd;
+                enemies.src = "images/enemies.png";
+            }
+            else{
+                this.xPos+=2;
+            }
+        }
+    }
+}
+
+let enemy1 = new Enemy(194, 183, canvasWidth * 1.5, canvasWidth * 1.5, canvasWidth * 2.25, playerY, 231, 223, 38);
+
+let animatePlyr = 3;
 function animatePlayer(){
 
     if(isPlayerDirectionRight){
-        if(animatePlyr++/2 == 1){
+        if(Math.floor(animatePlyr++/3) == 1){
             player.src = "images/player1.png";
         }
-        else if(animatePlyr++/2 == 2){
+        else if(Math.floor(animatePlyr++/3) == 2){
             player.src = "images/player2.png";
         }
-        else if(animatePlyr++/2 == 3){
+        else if(Math.floor(animatePlyr++/3) == 3){
             player.src = "images/player3.png";
         }
-        else if(animatePlyr++/2 == 4){
+        else if(Math.floor(animatePlyr++/3) == 4){
             player.src = "images/player4.png";
         }
-        else if(animatePlyr++/2 == 5){
+        else if(Math.floor(animatePlyr++/3) == 5){
             player.src = "images/player5.png";
         }
-        else if(animatePlyr++/2 == 6){
+        else if(Math.floor(animatePlyr++/3) == 6){
             player.src = "images/player6.png";
         }
-        else if(animatePlyr++/2 == 7){
+        else if(Math.floor(animatePlyr++/3) == 7){
             player.src = "images/player7.png";
         }
-        else if(animatePlyr++/2 == 8){
+        else if(Math.floor(animatePlyr++/3) == 8){
             player.src = "images/player8.png";   
         }
         else{
-            animatePlyr = 2;
+            animatePlyr = 3;
         }
     }
     else{
-        if(animatePlyr++/2 == 1){
+        if(Math.floor(animatePlyr++/3) == 1){
             player.src = "images/player1f.png";
         }
-        else if(animatePlyr++/2 == 2){
+        else if(Math.floor(animatePlyr++/3) == 2){
             player.src = "images/player2f.png";
         }
-        else if(animatePlyr++/2 == 3){
+        else if(Math.floor(animatePlyr++/3) == 3){
             player.src = "images/player3f.png";
         }
-        else if(animatePlyr++/2 == 4){
+        else if(Math.floor(animatePlyr++/3) == 4){
             player.src = "images/player4f.png";
         }
-        else if(animatePlyr++/2 == 5){
+        else if(Math.floor(animatePlyr++/3) == 5){
             player.src = "images/player5f.png";
         }
-        else if(animatePlyr++/2 == 6){
+        else if(Math.floor(animatePlyr++/3) == 6){
             player.src = "images/player6f.png";
         }
-        else if(animatePlyr++/2 == 7){
+        else if(Math.floor(animatePlyr++/3) == 7){
             player.src = "images/player7f.png";
         }
-        else if(animatePlyr++/2 == 8){
+        else if(Math.floor(animatePlyr++/3) == 8){
             player.src = "images/player8f.png";   
         }
         else{
-            animatePlyr = 2;
+            animatePlyr = 3;
         }
     }
 }
 
 let isJumping = false;
 
-
+let x = 0;
 let jumpDistance = 0;
+let playerX = 175;
+let playerWidth = 100;
+let playerHeight = 100;
+let enemyWidth = 100;
+let enemyHeight = 100;
+
 function animate(){
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     ctx.drawImage(backgroundLayer1, background1X, 0, canvasWidth, canvasHeight);
     ctx.drawImage(backgroundLayer2, background2X, 0, canvasWidth, canvasHeight);
-    ctx.drawImage(player, 175, playerY - 100 - jumpDistance, 100, 100);
+    ctx.drawImage(player, 175, playerY - playerHeight - jumpDistance, playerWidth, playerHeight);
+    
+    if(enemy1.isMovingLeft){
+        ctx.drawImage(enemies, enemy1.xPosInImage + Math.floor((x++/8)) * enemy1.width, enemy1.yPosInImage, enemy1.width, enemy1.height, enemy1.xPos - playerX, enemy1.yPos - enemyWidth, enemyWidth, enemyHeight);
+    }
+    else{
+        ctx.drawImage(enemies, enemy1.xPosInFlippedImage + Math.floor((x++/8)) * enemy1.width, enemy1.yPosInImage, enemy1.width, enemy1.height, enemy1.xPos - playerX, enemy1.yPos - enemyWidth, enemyWidth, enemyHeight);
+    }
+    enemy1.update();
+
+    if(((playerX + 175 <= enemy1.xPos && playerX + 175 + playerWidth > enemy1.xPos) || (enemy1.xPos <= playerX + 175 && enemy1.xPos + enemyWidth > playerX + 175)) &&  (playerY - jumpDistance == enemy1.yPos - enemyHeight)){
+        console.log("Enemy Dead");
+    }
+
+    if(((playerX + 175 <= enemy1.xPos && playerX + 175 + playerWidth > enemy1.xPos) || (enemy1.xPos <= playerX + 175 && enemy1.xPos + enemyWidth > playerX + 175)) &&  (playerY - jumpDistance == enemy1.yPos)){
+        console.log("Player Dead");
+    }
+
+
+    
+    if(x==32){
+        x=0;
+    }
+    
     requestAnimationFrame(animate);
 }
 
-console.log(canvasHeight, canvasWidth)
+
 animate();
 
 function moveRight(){
     isPlayerDirectionRight = true;
     background1X -= 10;
     background2X -= 10;
+    playerX += 10;   
     if(background1X < -canvasWidth){
         background1X = background2X + canvasWidth;
     }
     if(background2X < -canvasWidth){
         background2X = background1X + canvasWidth;
     }
-    animatePlayer();
+    if(!isJumping){
+        animatePlayer();
+    }
 }
 
 function moveLeft(){
     isPlayerDirectionRight = false;
     background1X += 10;
     background2X += 10;
+    playerX -= 10;
     if(background1X > canvasWidth){
         background1X = background2X - canvasWidth;
     }
     if(background2X > canvasWidth){
         background2X = background1X - canvasWidth;
     }
-    animatePlayer();
+    if(!isJumping){
+        animatePlayer();
+    }
 }
 
 let jumpDirection = "up";
@@ -136,19 +213,19 @@ let jump;
 
 function jump2(){
     if(jumpDirection == "up"){
-        jumpDistance += 8;
+        jumpDistance += 10;
     }
     else{
-        jumpDistance -= 8;
+        jumpDistance -= 10;
     }
     if(jumpDistance <= 0){
         clearInterval(jump);
         jumpDistance = 0;
         isJumping = false;
     }
-    if(jumpDistance >= 80){
+    if(jumpDistance >= 150){
         jumpDirection = "down";
-        jumpDistance = 80;
+        jumpDistance = 150;
     }
 }
 
@@ -158,19 +235,32 @@ document.addEventListener("keydown", (event) => {
         isMovingRight = true;   
         isMovingLeft = false;
         clearInterval(moveLeftEvent);
-        console.log("Right");
     }
     if(event.key == "ArrowLeft" && !isMovingLeft){
         moveLeftEvent = setInterval(moveLeft, 40);
         isMovingLeft = true;
         isMovingRight = false;
         clearInterval(moveRightEvent);
-        console.log("Left");
     }
     if(event.shiftKey && !isJumping){
-        jump = setInterval(jump2, 25);
+        jump = setInterval(jump2, 20);
         jumpDirection = "up";;
         isJumping = true;
+        if(isMovingRight){
+            player.src = "images/player1.png"
+        }
+        else if(isMovingLeft){
+            player.src = "images/player1f.png";
+        }
+        else if(isPlayerDirectionRight){
+            player.src = "images/player4.png";
+        }
+        else{
+            player.src = "images/player4f.png";
+        }
+    }
+    if(event.key == "A"){
+        console.log(playerX, enemy1.xPos);
     }
 });
 

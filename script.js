@@ -51,6 +51,7 @@ class Enemy{
         this.isMovingLeft = true;
         this.alive = true;
     }
+
     update(){
         if(this.isMovingLeft){
             if(this.xPos <= this.xPosStart){
@@ -73,21 +74,33 @@ class Enemy{
             }
         }
     }
+
+    draw(){
+        if(this.isMovingLeft){
+            ctx.drawImage(enemies, this.xPosInImage + Math.floor((x/8)) * this.width, this.yPosInImage, this.width, this.height, this.xPos - playerX, this.yPos, enemyWidth, enemyHeight);
+        }
+        else{
+            ctx.drawImage(enemies, this.xPosInFlippedImage + Math.floor((x/8)) * this.width, this.yPosInImage, this.width, this.height, this.xPos - playerX, this.yPos, enemyWidth, enemyHeight);
+        }
+    }
+
+    checkAlive(){
+        if(((playerX + playerXPos <= this.xPos && playerX + playerXPos + playerWidth > this.xPos) || (this.xPos <= playerX + playerXPos && this.xPos + enemyWidth > playerX + playerXPos)) &&  (playerY + playerHeight == this.yPos)){
+            this.alive = false;
+        }
+
+        if(((playerX + playerXPos <= this.xPos && playerX + playerXPos + playerWidth > this.xPos) || (this.xPos <= playerX + playerXPos && this.xPos + enemyWidth > playerX + playerXPos)) &&  (playerY == this.yPos)){
+            isPlayerAlive = false;
+        }
+    }
 }
 
 isPlayerAlive =true;
 
 
-function drawEnemy1(){
-    if(enemy1.isMovingLeft){
-        ctx.drawImage(enemies, enemy1.xPosInImage + Math.floor((x++/8)) * enemy1.width, enemy1.yPosInImage, enemy1.width, enemy1.height, enemy1.xPos - playerX, enemy1.yPos, enemyWidth, enemyHeight);
-    }
-    else{
-        ctx.drawImage(enemies, enemy1.xPosInFlippedImage + Math.floor((x++/8)) * enemy1.width, enemy1.yPosInImage, enemy1.width, enemy1.height, enemy1.xPos - playerX, enemy1.yPos, enemyWidth, enemyHeight);
-    }
-}
-
 let enemy1 = new Enemy(194, 183, canvasWidth * 2.25, canvasWidth * 1.5, canvasWidth * 2.25, groundY - enemyHeight, 231, 223, 38);
+let enemy2 = new Enemy(194, 183, canvasWidth * 3.75, canvasWidth * 3, canvasWidth * 3.75, groundY - enemyHeight, 231, 223, 38);
+let enemy3 = new Enemy(194, 183, canvasWidth * 5.25, canvasWidth * 4.5, canvasWidth * 5.25, groundY - enemyHeight, 231, 223, 38);
 
 let animatePlyr = 3;
 function animatePlayer(){
@@ -164,20 +177,22 @@ function animate(){
         ctx.drawImage(player, playerXPos, playerY, playerWidth, playerHeight);
     
         if(enemy1.alive){
-            drawEnemy1();
-
-            if(((playerX + playerXPos <= enemy1.xPos && playerX + playerXPos + playerWidth > enemy1.xPos) || (enemy1.xPos <= playerX + playerXPos && enemy1.xPos + enemyWidth > playerX + playerXPos)) &&  (playerY + playerHeight == enemy1.yPos)){
-                enemy1.alive = false;
-            }
-    
-            if(((playerX + playerXPos <= enemy1.xPos && playerX + playerXPos + playerWidth > enemy1.xPos) || (enemy1.xPos <= playerX + playerXPos && enemy1.xPos + enemyWidth > playerX + playerXPos)) &&  (playerY == enemy1.yPos)){
-                isPlayerAlive = false;
-            }
-
+            enemy1.draw();
+            enemy1.checkAlive();
             enemy1.update();
-            if(x==32){
-                x=0;
-            }
+        }
+        if(enemy2.alive){
+            enemy2.draw();
+            enemy2.checkAlive();
+            enemy2.update();
+        }
+        if(enemy3.alive){
+            enemy3.draw();
+            enemy3.checkAlive();
+            enemy3.update();
+        }
+        if(++x==32){
+            x=0;
         }
     }
     else{
@@ -224,15 +239,14 @@ function moveLeft(){
 }
 
 let jumpDirection = "up";
-
 let moveRightEvent;
 let isMovingRight = false;
 let moveLeftEvent;
 let isMovingLeft = false;
 
-let jump;
+let jumpEvent;
 
-function jump2(){
+function jump(){
     if(jumpDirection == "up"){
         playerY -= 10;
     }
@@ -240,7 +254,7 @@ function jump2(){
         playerY += 10;
     }
     if(playerY >= defaultPlayerY){
-        clearInterval(jump);
+        clearInterval(jumpEvent);
         playerY = defaultPlayerY;
         isJumping = false;
     }
@@ -264,7 +278,7 @@ document.addEventListener("keydown", (event) => {
         clearInterval(moveRightEvent);
     }
     if(event.shiftKey && !isJumping){
-        jump = setInterval(jump2, 20);
+        jumpEvent = setInterval(jump, 20);
         jumpDirection = "up";;
         isJumping = true;
         if(isMovingRight){
@@ -279,9 +293,6 @@ document.addEventListener("keydown", (event) => {
         else{
             player.src = "images/player4f.png";
         }
-    }
-    if(event.key == "A"){
-        console.log(playerX, enemy1.xPos);
     }
 });
 

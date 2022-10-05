@@ -49,6 +49,7 @@ class Enemy{
         this.yPosInImage = yPosInImage;
         this.xPosInFlippedImage = xPosInFlippedImage;
         this.isMovingLeft = true;
+        this.alive = true;
     }
     update(){
         if(this.isMovingLeft){
@@ -74,7 +75,19 @@ class Enemy{
     }
 }
 
-let enemy1 = new Enemy(194, 183, canvasWidth * 1.5, canvasWidth * 1.5, canvasWidth * 2.25, groundY - enemyHeight, 231, 223, 38);
+isPlayerAlive =true;
+
+
+function drawEnemy1(){
+    if(enemy1.isMovingLeft){
+        ctx.drawImage(enemies, enemy1.xPosInImage + Math.floor((x++/8)) * enemy1.width, enemy1.yPosInImage, enemy1.width, enemy1.height, enemy1.xPos - playerX, enemy1.yPos, enemyWidth, enemyHeight);
+    }
+    else{
+        ctx.drawImage(enemies, enemy1.xPosInFlippedImage + Math.floor((x++/8)) * enemy1.width, enemy1.yPosInImage, enemy1.width, enemy1.height, enemy1.xPos - playerX, enemy1.yPos, enemyWidth, enemyHeight);
+    }
+}
+
+let enemy1 = new Enemy(194, 183, canvasWidth * 2.25, canvasWidth * 1.5, canvasWidth * 2.25, groundY - enemyHeight, 231, 223, 38);
 
 let animatePlyr = 3;
 function animatePlayer(){
@@ -142,37 +155,36 @@ function animatePlayer(){
 let isJumping = false;
 
 
-
-
-
 function animate(){
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    ctx.drawImage(backgroundLayer1, background1X, 0, canvasWidth, canvasHeight);
-    ctx.drawImage(backgroundLayer2, background2X, 0, canvasWidth, canvasHeight);
-    ctx.drawImage(player, playerXPos, playerY, playerWidth, playerHeight);
+
+    if(isPlayerAlive){
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        ctx.drawImage(backgroundLayer1, background1X, 0, canvasWidth, canvasHeight);
+        ctx.drawImage(backgroundLayer2, background2X, 0, canvasWidth, canvasHeight);
+        ctx.drawImage(player, playerXPos, playerY, playerWidth, playerHeight);
     
-    if(enemy1.isMovingLeft){
-        ctx.drawImage(enemies, enemy1.xPosInImage + Math.floor((x++/8)) * enemy1.width, enemy1.yPosInImage, enemy1.width, enemy1.height, enemy1.xPos - playerX, enemy1.yPos, enemyWidth, enemyHeight);
+        if(enemy1.alive){
+            drawEnemy1();
+
+            if(((playerX + playerXPos <= enemy1.xPos && playerX + playerXPos + playerWidth > enemy1.xPos) || (enemy1.xPos <= playerX + playerXPos && enemy1.xPos + enemyWidth > playerX + playerXPos)) &&  (playerY + playerHeight == enemy1.yPos)){
+                enemy1.alive = false;
+            }
+    
+            if(((playerX + playerXPos <= enemy1.xPos && playerX + playerXPos + playerWidth > enemy1.xPos) || (enemy1.xPos <= playerX + playerXPos && enemy1.xPos + enemyWidth > playerX + playerXPos)) &&  (playerY == enemy1.yPos)){
+                isPlayerAlive = false;
+            }
+
+            enemy1.update();
+            if(x==32){
+                x=0;
+            }
+        }
     }
     else{
-        ctx.drawImage(enemies, enemy1.xPosInFlippedImage + Math.floor((x++/8)) * enemy1.width, enemy1.yPosInImage, enemy1.width, enemy1.height, enemy1.xPos - playerX, enemy1.yPos, enemyWidth, enemyHeight);
+        ctx.font = "72px Calibri";
+        ctx.fillStyle = "white";
+        ctx.fillText("Game Over!", 10, 60);
     }
-    enemy1.update();
-
-    if(((playerX + playerXPos <= enemy1.xPos && playerX + playerXPos + playerWidth > enemy1.xPos) || (enemy1.xPos <= playerX + playerXPos && enemy1.xPos + enemyWidth > playerX + playerXPos)) &&  (playerY + playerHeight == enemy1.yPos)){
-        console.log("Enemy Dead");
-    }
-
-    if(((playerX + playerXPos <= enemy1.xPos && playerX + playerXPos + playerWidth > enemy1.xPos) || (enemy1.xPos <= playerX + playerXPos && enemy1.xPos + enemyWidth > playerX + playerXPos)) &&  (playerY == enemy1.yPos)){
-        console.log("Player Dead");
-    }
-
-
-    
-    if(x==32){
-        x=0;
-    }
-    
     requestAnimationFrame(animate);
 }
 

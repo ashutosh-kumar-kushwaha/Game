@@ -15,6 +15,9 @@ let groundY = 0.812 * canvasHeight;
 
 let playerXPos = Math.floor(0.13 * canvasWidth);
 
+const finishLine = new Image();
+finishLine.src = "images/finishLine.png";
+
 let x = 0;
 let playerX = playerXPos;
 let playerWidth = 100;
@@ -35,7 +38,7 @@ let background2X = canvasWidth;
 const enemies = new Image();
 enemies.src = "images/enemies.png";
 
-
+let winPosX = 6*canvasWidth;
 
 class Enemy{
     constructor(height, width, xPos,xPosStart, xPosEnd, yPos, xPosInImage, yPosInImage, xPosInFlippedImage){
@@ -175,6 +178,7 @@ function animate(){
         ctx.drawImage(backgroundLayer1, background1X, 0, canvasWidth, canvasHeight);
         ctx.drawImage(backgroundLayer2, background2X, 0, canvasWidth, canvasHeight);
         ctx.drawImage(player, playerXPos, playerY, playerWidth, playerHeight);
+        ctx.drawImage(finishLine, winPosX - playerX, groundY-200, 300, 200);
     
         if(enemy1.alive){
             enemy1.draw();
@@ -193,6 +197,11 @@ function animate(){
         }
         if(++x==32){
             x=0;
+        }
+        if(playerX >= winPosX){
+            ctx.font = "72px Calibri";
+            ctx.fillStyle = "white";
+            ctx.fillText("You won!", 10, 60);
         }
     }
     else{

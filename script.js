@@ -11,7 +11,18 @@ backgroundLayer1.src = "images/bg.png";
 const backgroundLayer2 = new Image();
 backgroundLayer2.src = "images/bg.png";
 
-let playerY = 0.812 * canvasHeight;
+let groundY = 0.812 * canvasHeight;
+
+let playerXPos = Math.floor(0.13 * canvasWidth);
+
+let x = 0;
+let playerX = playerXPos;
+let playerWidth = 100;
+let playerHeight = 100;
+let enemyWidth = 100;
+let enemyHeight = 100;
+let defaultPlayerY = groundY - playerHeight;
+let playerY = defaultPlayerY;
 
 const player = new Image();
 player.src = "images/player1.png";
@@ -23,6 +34,8 @@ let background2X = canvasWidth;
 
 const enemies = new Image();
 enemies.src = "images/enemies.png";
+
+
 
 class Enemy{
     constructor(height, width, xPos,xPosStart, xPosEnd, yPos, xPosInImage, yPosInImage, xPosInFlippedImage){
@@ -61,7 +74,7 @@ class Enemy{
     }
 }
 
-let enemy1 = new Enemy(194, 183, canvasWidth * 1.5, canvasWidth * 1.5, canvasWidth * 2.25, playerY, 231, 223, 38);
+let enemy1 = new Enemy(194, 183, canvasWidth * 1.5, canvasWidth * 1.5, canvasWidth * 2.25, groundY - enemyHeight, 231, 223, 38);
 
 let animatePlyr = 3;
 function animatePlayer(){
@@ -128,33 +141,29 @@ function animatePlayer(){
 
 let isJumping = false;
 
-let x = 0;
-let jumpDistance = 0;
-let playerX = 175;
-let playerWidth = 100;
-let playerHeight = 100;
-let enemyWidth = 100;
-let enemyHeight = 100;
+
+
+
 
 function animate(){
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     ctx.drawImage(backgroundLayer1, background1X, 0, canvasWidth, canvasHeight);
     ctx.drawImage(backgroundLayer2, background2X, 0, canvasWidth, canvasHeight);
-    ctx.drawImage(player, 175, playerY - playerHeight - jumpDistance, playerWidth, playerHeight);
+    ctx.drawImage(player, playerXPos, playerY, playerWidth, playerHeight);
     
     if(enemy1.isMovingLeft){
-        ctx.drawImage(enemies, enemy1.xPosInImage + Math.floor((x++/8)) * enemy1.width, enemy1.yPosInImage, enemy1.width, enemy1.height, enemy1.xPos - playerX, enemy1.yPos - enemyWidth, enemyWidth, enemyHeight);
+        ctx.drawImage(enemies, enemy1.xPosInImage + Math.floor((x++/8)) * enemy1.width, enemy1.yPosInImage, enemy1.width, enemy1.height, enemy1.xPos - playerX, enemy1.yPos, enemyWidth, enemyHeight);
     }
     else{
-        ctx.drawImage(enemies, enemy1.xPosInFlippedImage + Math.floor((x++/8)) * enemy1.width, enemy1.yPosInImage, enemy1.width, enemy1.height, enemy1.xPos - playerX, enemy1.yPos - enemyWidth, enemyWidth, enemyHeight);
+        ctx.drawImage(enemies, enemy1.xPosInFlippedImage + Math.floor((x++/8)) * enemy1.width, enemy1.yPosInImage, enemy1.width, enemy1.height, enemy1.xPos - playerX, enemy1.yPos, enemyWidth, enemyHeight);
     }
     enemy1.update();
 
-    if(((playerX + 175 <= enemy1.xPos && playerX + 175 + playerWidth > enemy1.xPos) || (enemy1.xPos <= playerX + 175 && enemy1.xPos + enemyWidth > playerX + 175)) &&  (playerY - jumpDistance == enemy1.yPos - enemyHeight)){
+    if(((playerX + playerXPos <= enemy1.xPos && playerX + playerXPos + playerWidth > enemy1.xPos) || (enemy1.xPos <= playerX + playerXPos && enemy1.xPos + enemyWidth > playerX + playerXPos)) &&  (playerY + playerHeight == enemy1.yPos)){
         console.log("Enemy Dead");
     }
 
-    if(((playerX + 175 <= enemy1.xPos && playerX + 175 + playerWidth > enemy1.xPos) || (enemy1.xPos <= playerX + 175 && enemy1.xPos + enemyWidth > playerX + 175)) &&  (playerY - jumpDistance == enemy1.yPos)){
+    if(((playerX + playerXPos <= enemy1.xPos && playerX + playerXPos + playerWidth > enemy1.xPos) || (enemy1.xPos <= playerX + playerXPos && enemy1.xPos + enemyWidth > playerX + playerXPos)) &&  (playerY == enemy1.yPos)){
         console.log("Player Dead");
     }
 
@@ -213,19 +222,19 @@ let jump;
 
 function jump2(){
     if(jumpDirection == "up"){
-        jumpDistance += 10;
+        playerY -= 10;
     }
     else{
-        jumpDistance -= 10;
+        playerY += 10;
     }
-    if(jumpDistance <= 0){
+    if(playerY >= defaultPlayerY){
         clearInterval(jump);
-        jumpDistance = 0;
+        playerY = defaultPlayerY;
         isJumping = false;
     }
-    if(jumpDistance >= 150){
+    if(playerY <= defaultPlayerY - 150){
         jumpDirection = "down";
-        jumpDistance = 150;
+        playerY = defaultPlayerY - 150;
     }
 }
 

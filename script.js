@@ -316,3 +316,18 @@ document.addEventListener("keyup", (event) => {
         isMovingLeft = false;
     }
 });
+
+// document.querySelector("#right").addEventListener("click", (event) => {
+//     moveRight();
+//     isMovingLeft = false;
+// });
+
+// document.querySelector("#left").addEventListener("click", (event) => {
+//     moveLeft();
+//     isMovingLeft = true;
+// });
+
+// document.querySelector("#jump").addEventListener("click", (event) => {
+//     jumpEvent = setInterval(jump, 20);
+//     isJumping = true;
+// });
